@@ -50,6 +50,9 @@ dialog{border:1px solid var(--line);border-radius:16px;padding:20px;width:min(52
 .empty{color:var(--mut);padding:14px 0}.err{color:var(--red);min-height:22px;font-size:13px}
 #login{max-width:380px;margin:12vh auto;background:rgba(255,255,255,.82);padding:20px 22px;border-radius:16px;border:1px solid var(--line)}
 #login .brand{padding:0 0 14px}#login .logoimg{width:70%;margin:0 auto;background:transparent;padding:0}
+@keyframes blinkbar{0%,100%{background-color:#fef3c7;box-shadow:0 0 0 0 rgba(217,119,6,0);border-color:var(--line)}50%{background-color:#fcd34d;box-shadow:0 0 0 4px rgba(217,119,6,.45);border-color:#d97706}}
+.blink{animation:blinkbar 1.2s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.blink{animation:none}}
 .hide{display:none!important}
 @media(max-width:900px){.app{display:block}nav{position:static;width:auto;flex-direction:row;flex-wrap:wrap;align-items:center;padding:8px;border-right:0;border-bottom:1px solid rgba(180,130,20,.4)}.brand{padding:0 10px 0 4px}.brand .logoimg{width:auto;height:34px;padding:3px 8px}.brand small,.mode,.sp{display:none}.wrapmain{margin-left:0}header.top{position:static;padding:10px 14px}.content{padding:12px}.grid2,.two{grid-template-columns:1fr}.wrap{overflow-x:auto}}
 </style></head><body>
@@ -145,7 +148,7 @@ function render(){
   const ev=events(30),td=events(0),rec=[...visits].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6);
   const d30=iso(new Date(today().getTime()-30*864e5)),rev=visits.filter(v=>v.date>=d30).reduce((s,v)=>s+(+v.bill||0),0);
   const top=guests.map(g=>({g,s:spend(g)})).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,5);
-  m.innerHTML=`${td.length?`<div class="panel" style="background:#fef3c7;margin-bottom:16px"><h2>Today: prepare for ${td.length} celebration${td.length>1?"s":""}</h2>${td.map(e=>`<p style="margin:0 0 6px"><b>${esc(e.g.name)}</b> <span class="tag ${tg(e.k)}">${e.k}</span> ${OFFER[e.k]}${e.g.prefs?` · ${esc(e.g.prefs)}`:""}</p>`).join("")}</div>`:""}
+  m.innerHTML=`${td.length?`<div class="panel blink" style="background:#fef3c7;margin-bottom:16px"><h2>Today: prepare for ${td.length} celebration${td.length>1?"s":""}</h2>${td.map(e=>`<p style="margin:0 0 6px"><b>${esc(e.g.name)}</b> <span class="tag ${tg(e.k)}">${e.k}</span> ${OFFER[e.k]}${e.g.prefs?` · ${esc(e.g.prefs)}`:""}</p>`).join("")}</div>`:""}
   <div class="stats">
   <div class="stat"><i style="background:#d97706">☺</i><div><span>Registered guests</span><b>${guests.length}</b></div></div>
   <div class="stat"><i style="background:#b45309">☰</i><div><span>Recorded visits</span><b>${visits.length}</b></div></div>
