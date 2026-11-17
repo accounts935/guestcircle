@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GuestCircle – Guest Relationship &amp; Loyalty</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ffe27a'/%3E%3Cstop offset='1' stop-color='%23eaa800'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ccircle cx='32' cy='32' r='17' fill='none' stroke='%2378350f' stroke-width='6'/%3E%3Ccircle cx='32' cy='27' r='5' fill='%2378350f'/%3E%3Cpath d='M22 42c2-7 18-7 20 0' fill='none' stroke='%2378350f' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#E8C566">
+<style>
+:root{--g1:#F3D98B;--g2:#F9EBC4;--g3:#FFFBF0;--ink:#3a2a0d;--mut:#6b5a35;--line:rgba(217,170,60,.4);--pri:#b45309;--pri2:#92400e;--red:#b91c1c;--grn:#047857}
+*{box-sizing:border-box}
+html,body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);font-size:14px}
+body{background:linear-gradient(90deg,var(--g1) 0%,var(--g2) 45%,var(--g3) 100%) fixed;min-height:100vh}
+h1,h2,h3{margin:0}
+.app{display:flex;min-height:100vh}
+nav{width:250px;flex-shrink:0;background:linear-gradient(90deg,#E8C566,#F1D585);border-right:1px solid rgba(180,130,20,.4);position:fixed;left:0;top:0;bottom:0;z-index:30;display:flex;flex-direction:column;gap:4px;padding:14px 12px;overflow-y:auto}
+.brand{padding:10px 6px 18px}.brand b{display:block;letter-spacing:.16em;font-size:17px;font-weight:900;color:#451a03}.brand small{display:block;letter-spacing:.32em;font-weight:700;font-size:10px;color:#78350f;margin-top:3px}
+nav button{all:unset;cursor:pointer;display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:12px;font-weight:600;font-size:13px;color:#451a03}
+nav button:hover{background:rgba(255,255,255,.5)}nav button.on{background:#78350f;color:#fffbeb}
+nav button:focus-visible{outline:2px solid var(--pri2);outline-offset:2px}
+nav .sp{flex:1}
+.mode{background:rgba(255,255,255,.5);border:1px solid rgba(180,130,20,.4);border-radius:14px;padding:12px;font-size:12px;line-height:1.5;margin:10px 0}
+.wrapmain{flex:1;min-width:0;margin-left:250px}
+header.top{position:sticky;top:0;z-index:20;background:linear-gradient(90deg,rgba(243,217,139,.94),rgba(249,235,196,.94) 45%,rgba(255,251,240,.94));backdrop-filter:blur(6px);border-bottom:1px solid rgba(217,170,60,.5);padding:12px 24px}
+header.top small{display:block;font-size:10px;font-weight:900;letter-spacing:.25em;color:#92400e}
+header.top h1{font-size:20px;font-weight:900}header.top p{margin:2px 0 0;font-size:12px;color:var(--mut)}
+.content{padding:24px;max-width:1400px;margin:0 auto}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:0 0 18px}
+.stat{background:rgba(255,255,255,.82);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;gap:12px}
+.stat i{width:40px;height:40px;border-radius:12px;color:#fff;display:grid;place-items:center;font-style:normal;font-weight:800;flex-shrink:0}
+.stat span{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}.stat b{display:block;font-size:22px;font-weight:900;margin-top:2px}
+.grid2{display:grid;grid-template-columns:3fr 2fr;gap:16px}
+.panel{background:rgba(255,255,255,.82);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.panel h2{font-size:15px;margin-bottom:10px}
+table{width:100%;border-collapse:collapse}
+th{background:#fff6dc;text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--mut);padding:10px 12px}
+td{padding:10px 12px;border-top:1px solid #f3e3b0;vertical-align:middle}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.tag{white-space:nowrap;display:inline-block;padding:1px 9px;border-radius:99px;font-size:11px;font-weight:600;border:1px solid}
+.bd{background:#fef3c7;color:#92400e;border-color:#fcd34d}.an{background:#fef2f2;color:var(--red);border-color:#fecaca}.tier{background:#ecfdf5;color:var(--grn);border-color:#a7f3d0}
+button.b,a.b{cursor:pointer;border:1px solid var(--pri);background:var(--pri);color:#fff;padding:9px 14px;border-radius:12px;font:700 13px inherit;font-family:inherit;text-decoration:none;display:inline-block}
+button.b:hover,a.b:hover{background:var(--pri2)}
+button.b.s,a.b.s{background:rgba(255,255,255,.8);color:var(--ink);border-color:#e3b84f}button.b.s:hover,a.b.s:hover{background:#fff3c4}
+button.b.d{background:rgba(255,255,255,.8);color:var(--red);border-color:#e3b84f}
+button.sm{padding:6px 10px;font-size:12px;border-radius:9px}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--pri2);outline-offset:2px}
+input,select,textarea{font-family:inherit;font-size:14px;color:var(--ink);border:1px solid #e3c36f;background:rgba(255,255,255,.92);border-radius:9px;padding:9px 11px;width:100%;outline:none}
+input:focus,select:focus,textarea:focus{box-shadow:0 0 0 2px #d97706}
+label{display:block;font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--mut);margin-top:10px;text-transform:uppercase}
+label.ck{display:flex;gap:8px;align-items:center;text-transform:none;font-size:13px;letter-spacing:0}label.ck input{width:auto}
+dialog{border:1px solid var(--line);border-radius:16px;padding:20px;width:min(520px,94vw);background:#fffdf6;color:var(--ink)}dialog::backdrop{background:#3a2a0d66}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.empty{color:var(--mut);padding:14px 0}.err{color:var(--red);min-height:22px;font-size:13px}
+#login{max-width:380px;margin:12vh auto;background:rgba(255,255,255,.82);padding:20px 22px;border-radius:16px;border:1px solid var(--line)}
+#login .brand{text-align:center;padding:0 0 14px}
+.hide{display:none!important}
+@media(max-width:900px){.app{display:block}nav{position:static;width:auto;flex-direction:row;flex-wrap:wrap;align-items:center;padding:8px;border-right:0;border-bottom:1px solid rgba(180,130,20,.4)}.brand{padding:0 10px 0 4px}.brand small,.mode,.sp{display:none}.wrapmain{margin-left:0}header.top{position:static;padding:10px 14px}.content{padding:12px}.grid2,.two{grid-template-columns:1fr}.wrap{overflow-x:auto}}
+</style></head><body>
+<div id="boot" style="text-align:center;padding:30vh 0;color:#6b5a35;font-weight:700">Loading…</div>
+<form id="login" class="hide"><div class="brand"><b>GUESTCIRCLE</b><small>GUWAHATI</small></div><h3>Sign in</h3>
+<label>Email<input id="le" type="email" required autocomplete="username"></label>
+<label>Password<input id="lp" type="password" required autocomplete="current-password"></label>
+<div class="err" id="lerr"></div><button class="b" style="width:100%;margin-top:14px">Sign in</button><p class="muted" style="font-size:12px;color:var(--mut)">Staff accounts are created by the owner in the Firebase console.</p></form>
+
+<div class="app hide" id="app">
+<nav><div class="brand"><b>GUESTCIRCLE</b><small>GUWAHATI</small></div>
+<button data-v="dash" class="on">Dashboard</button><button data-v="guests">Guests</button><button data-v="visits">Visits</button><button data-v="cele">Celebrations</button><button data-v="offers">Offers</button>
+<div class="sp"></div><div class="mode" id="mode"></div><button id="out" class="hide">Sign out</button></nav>
+<div class="wrapmain"><header class="top"><small>GUESTCIRCLE</small><h1 id="ttl">Dashboard</h1><p id="sub"></p></header><div class="content" id="main"></div></div></div>
+
+<dialog id="gd"><form id="gf" method="dialog"><h2 id="gt">Register guest</h2><input type="hidden" id="gid">
+<label>Full name<input id="gn" required></label>
+<div class="two"><label>Email<input id="ge" type="email"></label><label>Mobile / WhatsApp<input id="gm" type="tel" placeholder="+91..."></label></div>
+<div class="two"><label>Date of birth<input id="gb" type="date"></label><label>Anniversary<input id="ga" type="date"></label></div>
+<label>Preferences<textarea id="gp" rows="2" placeholder="Veg only, window seat, no onion"></textarea></label>
+<label class="ck"><input type="checkbox" id="gc"> Guest agrees to promotional messages</label>
+<div class="row" style="margin:0"><button type="button" class="b s" data-close>Cancel</button><button class="b">Save guest</button></div></form></dialog>
+
+<dialog id="vd"><form id="vf" method="dialog"><h2>Record visit</h2>
+<label>Guest<select id="vg" required></select></label>
+<div class="two"><label>Visit date<input id="vdt" type="date" required></label><label>Table number<input id="vt" placeholder="T-04"></label></div>
+<div class="two"><label>Number of guests<input id="vn" type="number" min="1" value="2" required></label>
+<label>Visit type<select id="vty"><option>Dining</option><option>Stay</option><option>Event</option><option>Takeaway</option></select></label></div>
+<label>Occasion<select id="vo"><option>Regular</option><option>Birthday</option><option>Anniversary</option></select></label>
+<label>Remarks<textarea id="vr" rows="2"></textarea></label>
+<div class="row" style="margin:0"><button type="button" class="b s" data-close>Cancel</button><button class="b">Save visit</button></div></form></dialog>
+
+<script type="module">
+/* Firebase web app config. If apiKey starts with YOUR_, the app runs in demo mode without login. */
+const CFG={apiKey:"AIzaSyAxIwk6vFip8XCMlcUWb9Z281JHWfIAzZM",authDomain:"guestcircle.firebaseapp.com",projectId:"guestcircle",storageBucket:"guestcircle.firebasestorage.app",messagingSenderId:"1075755369201",appId:"1:1075755369201:web:22bc87101dcfe4685d9f50"};
+const DEMO=CFG.apiKey.startsWith("YOUR_"),V="10.12.2",G=`https://www.gstatic.com/firebasejs/${V}/`;
+const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let store,auth,A;
+if(DEMO){
+ const rd=c=>JSON.parse(localStorage.getItem("gc_"+c)||"[]"),wr=(c,a)=>localStorage.setItem("gc_"+c,JSON.stringify(a));
+ store={list:async c=>rd(c),save:async(c,o)=>{const a=rd(c);if(o.id){a[a.findIndex(x=>x.id===o.id)]=o}else{o.id=crypto.randomUUID();a.push(o)}wr(c,a)},del:async(c,id)=>wr(c,rd(c).filter(x=>x.id!==id))};
+}else{
+ const [ap,fs,au]=await Promise.all([import(G+"firebase-app.js"),import(G+"firebase-firestore.js"),import(G+"firebase-auth.js")]);
+ const app=ap.initializeApp(CFG),db=fs.getFirestore(app);auth=au.getAuth(app);A=au;
+ store={list:async c=>(await fs.getDocs(fs.collection(db,c))).docs.map(d=>({...d.data(),id:d.id})),
+  save:async(c,o)=>{const{id,...r}=o;if(id)await fs.setDoc(fs.doc(db,c,id),r);else await fs.addDoc(fs.collection(db,c),{...r,createdAt:fs.serverTimestamp()})},
+  del:async(c,id)=>fs.deleteDoc(fs.doc(db,c,id))};
+}
+let guests=[],visits=[],view="dash",q="";
+const today=()=>{const d=new Date();return new Date(d.getFullYear(),d.getMonth(),d.getDate())};
+const fmt=s=>s?s.split("-").reverse().join("-"):"";
+const next=s=>{if(!s)return null;const[,m,d]=s.split("-").map(Number),t=today();let c=new Date(t.getFullYear(),m-1,d);if(c<t)c=new Date(t.getFullYear()+1,m-1,d);return{date:c,days:Math.round((c-t)/864e5)}};
+const when=n=>n===0?"Today":n===1?"Tomorrow":`In ${n} days`;
+const dm=d=>d.toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+const gv=id=>visits.filter(v=>v.guestId===id);
+const tier=g=>{const v=gv(g.id),n=v.length;return n>=10?"Premium":n>=3?"Returning":n>=1?"New":"Registered"};
+const grp=g=>gv(g.id).some(v=>+v.party>=8);
+const OFFER={Birthday:"Complimentary dessert",Anniversary:"Complimentary couple's dessert or special table arrangement"};
+const loyalty=g=>{const t=tier(g);return grp(g)?"Special group dining package":t==="Premium"?"Priority reservation and an exclusive experience":t==="Returning"?"Exclusive loyalty discount":""};
+const events=days=>guests.flatMap(g=>[["Birthday",g.dob],["Anniversary",g.anniv]].map(([k,s])=>{const n=next(s);return n&&n.days<=days?{g,k,...n}:null}).filter(Boolean)).sort((a,b)=>a.days-b.days);
+const lastVisit=g=>gv(g.id).map(v=>v.date).sort().pop()||"";
+const wa=(g,e)=>{const p=(g.mobile||"").replace(/\D/g,"");if(!p||!g.consent)return"";const t=`Hello ${g.name.split(" ")[0]}, the team at our restaurant wishes you a happy ${e.k.toLowerCase()}! Enjoy: ${OFFER[e.k]}. Show this message when you visit.`;return`https://wa.me/${p}?text=${encodeURIComponent(t)}`};
+const evRow=e=>`<tr><td>${esc(e.g.name)}</td><td><span class="tag ${e.k==="Birthday"?"bd":"an"}">${e.k}</span></td><td>${dm(e.date)}</td><td>${when(e.days)}</td></tr>`;
+
+function render(){
+ const m=$("#main");
+ if(view==="dash"){
+  const ev=events(30),rec=[...visits].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,6);
+  m.innerHTML=`<div class="stats">
+  <div class="stat"><i style="background:#d97706">☺</i><div><span>Registered guests</span><b>${guests.length}</b></div></div>
+  <div class="stat"><i style="background:#b45309">☰</i><div><span>Recorded visits</span><b>${visits.length}</b></div></div>
+  <div class="stat"><i style="background:#44403c">✦</i><div><span>Birthdays in 30 days</span><b>${ev.filter(e=>e.k==="Birthday").length}</b></div></div>
+  <div class="stat"><i style="background:#dc2626">♥</i><div><span>Anniversaries in 30 days</span><b>${ev.filter(e=>e.k==="Anniversary").length}</b></div></div></div>
+  <div class="grid2"><div class="panel"><h2>Upcoming celebrations</h2>${ev.length?`<div class="wrap"><table><tr><th>Guest</th><th>Occasion</th><th>Date</th><th>Reminder</th></tr>${ev.slice(0,8).map(evRow).join("")}</table></div>`:'<p class="empty">No celebrations in the next 30 days. Add birthdays and anniversaries to guest profiles.</p>'}</div>
+  <div class="panel"><h2>Recently visited</h2>${rec.length?rec.map(v=>`<p style="margin:0 0 10px"><b>${esc(v.guestName)}</b><br><span style="color:var(--mut)">${fmt(v.date)} · ${esc(v.type)} · ${v.party} guests</span></p>`).join(""):'<p class="empty">No visits yet. Record the first visit from the Visits tab.</p>'}</div></div>`;
+ }
+ if(view==="guests"){
+  const l=guests.filter(g=>(g.name+g.mobile+g.email).toLowerCase().includes(q.toLowerCase())).sort((a,b)=>a.name.localeCompare(b.name));
+  m.innerHTML=`<div class="row"><span></span><div class="row" style="margin:0"><input id="q" placeholder="Search name, mobile or email" value="${esc(q)}" style="width:260px"><button class="b" id="addg">Register guest</button></div></div>
+  <div class="panel wrap">${l.length?`<table><tr><th>Name</th><th>Contact</th><th>Birthday</th><th>Anniversary</th><th>Visits</th><th>Status</th><th></th></tr>${l.map(g=>`<tr><td><b>${esc(g.name)}</b><br><small style="color:var(--mut)">${esc(g.prefs)}</small></td><td>${esc(g.mobile)}<br><small>${esc(g.email)}</small></td><td>${fmt(g.dob)}</td><td>${fmt(g.anniv)}</td><td>${gv(g.id).length}</td><td><span class="tag tier">${tier(g)}</span>${g.consent?"":'<br><small style="color:var(--red)">No promo consent</small>'}</td><td><button class="b s sm" data-edit="${g.id}">Edit</button> <button class="b d sm" data-delg="${g.id}">Delete</button></td></tr>`).join("")}</table>`:'<p class="empty">No guests found. Register a guest to start building their profile.</p>'}</div>`;
+  $("#q").oninput=e=>{q=e.target.value;const p=e.target.selectionStart;render();$("#q").focus();$("#q").setSelectionRange(p,p)};
+  $("#addg").onclick=()=>openG();
+ }
+ if(view==="visits"){
+  const l=[...visits].sort((a,b)=>b.date.localeCompare(a.date));
+  m.innerHTML=`<div class="row"><span></span><button class="b" id="addv">Record visit</button></div><div class="panel wrap">${l.length?`<table><tr><th>Date</th><th>Guest</th><th>Table</th><th>Guests</th><th>Type</th><th>Occasion</th><th>Remarks</th><th></th></tr>${l.map(v=>`<tr><td>${fmt(v.date)}</td><td>${esc(v.guestName)}</td><td>${esc(v.table)}</td><td>${v.party}</td><td>${esc(v.type)}</td><td>${esc(v.occasion)}</td><td>${esc(v.remarks)}</td><td><button class="b d sm" data-delv="${v.id}">Delete</button></td></tr>`).join("")}</table>`:'<p class="empty">No visits recorded yet.</p>'}</div>`;
+  $("#addv").onclick=openV;
+ }
+ if(view==="cele"){
+  const ev=events(60);
+  m.innerHTML=`<div class="panel wrap">${ev.length?`<table><tr><th>Guest</th><th>Occasion</th><th>Date</th><th>Reminder</th><th>Suggested offer</th><th></th></tr>${ev.map(e=>{const w=wa(e.g,e);return`<tr><td>${esc(e.g.name)}<br><small style="color:var(--mut)">${esc(e.g.prefs)}</small></td><td><span class="tag ${e.k==="Birthday"?"bd":"an"}">${e.k}</span></td><td>${dm(e.date)}</td><td>${when(e.days)}</td><td>${OFFER[e.k]}${loyalty(e.g)?`<br><small>Also: ${loyalty(e.g)}</small>`:""}</td><td>${w?`<a class="b s sm" target="_blank" rel="noopener" href="${w}">WhatsApp</a>`:'<small style="color:var(--mut)">No consent or number</small>'}</td></tr>`}).join("")}</table>`:'<p class="empty">Nothing coming up in the next 60 days.</p>'}</div>`;
+ }
+ if(view==="offers"){
+  const rows=[["Birthday","Complimentary dessert"],["Anniversary","Complimentary couple's dessert or special table arrangement"],["Returning guests (3+ visits)","Exclusive loyalty discount"],["Groups (8+ guests in a visit)","Special group dining package"],["Premium guests (10+ visits)","Priority reservations and exclusive experiences"]];
+  m.innerHTML=`<div class="grid2"><div class="panel"><h2>Offer rules</h2><table>${rows.map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td></tr>`).join("")}</table></div>
+  <div class="panel"><h2>Guests eligible now</h2>${guests.filter(loyalty).map(g=>`<p style="margin:0 0 10px"><b>${esc(g.name)}</b> <span class="tag tier">${tier(g)}</span><br><small>${loyalty(g)}</small></p>`).join("")||'<p class="empty">No guests qualify yet. Offers unlock as visits are recorded.</p>'}</div></div>`;
+ }
+}
+function openG(g={}){$("#gt").textContent=g.id?"Edit guest":"Register guest";$("#gid").value=g.id||"";$("#gn").value=g.name||"";$("#ge").value=g.email||"";$("#gm").value=g.mobile||"";$("#gb").value=g.dob||"";$("#ga").value=g.anniv||"";$("#gp").value=g.prefs||"";$("#gc").checked=!!g.consent;$("#gd").showModal()}
+function openV(){if(!guests.length){alert("Register a guest first.");return}$("#vg").innerHTML=[...guests].sort((a,b)=>a.name.localeCompare(b.name)).map(g=>`<option value="${g.id}">${esc(g.name)}</option>`).join("");$("#vdt").value=new Date().toLocaleDateString("en-CA");$("#vf").reset;$("#vd").showModal()}
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>b.closest("dialog").close());
+$("#gf").onsubmit=async e=>{await store.save("guests",{id:$("#gid").value||undefined,name:$("#gn").value.trim(),email:$("#ge").value.trim(),mobile:$("#gm").value.trim(),dob:$("#gb").value,anniv:$("#ga").value,prefs:$("#gp").value.trim(),consent:$("#gc").checked});await load()};
+$("#vf").onsubmit=async e=>{const g=guests.find(x=>x.id===$("#vg").value);await store.save("visits",{guestId:g.id,guestName:g.name,date:$("#vdt").value,table:$("#vt").value.trim(),party:+$("#vn").value,type:$("#vty").value,occasion:$("#vo").value,remarks:$("#vr").value.trim()});$("#vt").value=$("#vr").value="";await load()};
+$("#main").onclick=async e=>{const t=e.target;
+ if(t.dataset.edit)openG(guests.find(g=>g.id===t.dataset.edit));
+ if(t.dataset.delg&&confirm("Delete this guest profile? Their visit records stay in the Visits list.")){await store.del("guests",t.dataset.delg);await load()}
+ if(t.dataset.delv&&confirm("Delete this visit record?")){await store.del("visits",t.dataset.delv);await load()}};
+const T={dash:['Dashboard','Guest relationships at a glance'],guests:['Guests','Profiles, preferences and marketing consent'],visits:['Visits','Every visit is recorded against the guest profile'],cele:['Celebrations','Birthdays and anniversaries coming up'],offers:['Offers','Offer rules and guests who qualify now']};
+document.querySelectorAll("nav [data-v]").forEach(b=>b.onclick=()=>{view=b.dataset.v;$('#ttl').textContent=T[view][0];$('#sub').textContent=T[view][1];document.querySelectorAll("nav [data-v]").forEach(x=>x.classList.toggle("on",x===b));render()});
+async function load(){[guests,visits]=await Promise.all([store.list("guests"),store.list("visits")]);render()}
+function start(){$("#boot").classList.add("hide");$("#sub").textContent="Guest relationships at a glance";$("#login").classList.add("hide");$("#app").classList.remove("hide");$("#mode").textContent=DEMO?"Demo mode: data stays in this browser":"Connected to Firestore";load()}
+if(DEMO)start();else{
+ $("#out").classList.remove("hide");$("#out").onclick=()=>A.signOut(auth);
+ A.onAuthStateChanged(auth,u=>{if(u)start();else{$("#boot").classList.add("hide");$("#app").classList.add("hide");$("#login").classList.remove("hide")}});
+ $("#login").onsubmit=async e=>{e.preventDefault();$("#lerr").textContent="";try{await A.signInWithEmailAndPassword(auth,$("#le").value,$("#lp").value)}catch(x){$("#lerr").textContent=/invalid-credential|wrong-password|user-not-found|invalid-email/.test(x.code||"")?"Email or password is incorrect. Ask the owner to check your staff account.":"Sign in failed: "+(x.code||x.message)}};
+}
+</script></body></html>
