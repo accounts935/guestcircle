@@ -118,7 +118,12 @@ const OFFER={Birthday:"Complimentary dessert",Anniversary:"Complimentary couple'
 const loyalty=g=>{const t=tier(g);return grp(g)?"Special group dining package":t==="Premium"?"Priority reservation and an exclusive experience":t==="Returning"?"Exclusive loyalty discount":""};
 const events=days=>guests.flatMap(g=>[["Birthday",g.dob],["Anniversary",g.anniv]].map(([k,s])=>{const n=next(s);return n&&n.days<=days?{g,k,...n}:null}).filter(Boolean)).sort((a,b)=>a.days-b.days);
 const first=g=>g.name.split(" ")[0];
-const msgFor=(g,k)=>k==="Win-back"?`Hello ${first(g)}, we miss you! Visit us again this month and enjoy an exclusive offer.`:`Hello ${first(g)}, the team wishes you a happy ${k.toLowerCase()}! Enjoy: ${OFFER[k]}. Show this message when you visit.`;
+const TPL={
+ Birthday:"Hello {name}, everyone at Chouka wishes you a very happy birthday! 🎂 Enjoy a complimentary dessert on your visit. Show this message to our team.",
+ Anniversary:"Hello {name}, happy anniversary from all of us at Chouka! 💛 Enjoy a complimentary couple's dessert on your visit.",
+ "Win-back":"Hello {name}, we miss you at Chouka! Visit us this month and enjoy an exclusive offer."
+};
+const msgFor=(g,k)=>TPL[k].replaceAll("{name}",first(g));
 const wa=(g,msg)=>{let p=(g.mobile||"").replace(/\D/g,"");if(p.length===10)p="91"+p;return p&&g.consent?`https://wa.me/${p}?text=${encodeURIComponent(msg)}`:""};
 const tg=k=>k==="Birthday"?"bd":"an";
 const acts=(g,kind,period)=>{const o=offers.find(x=>x.guestId===g.id&&x.kind===kind&&x.period===period);
@@ -158,10 +163,12 @@ function render(){
  }
  if(view==="guests"){
   const l=guests.filter(g=>(g.name+g.mobile+g.email).toLowerCase().includes(q.toLowerCase())).sort((a,b)=>a.name.localeCompare(b.name));
-  m.innerHTML=`<div class="row"><span></span><div class="row" style="margin:0"><input id="q" placeholder="Search name, mobile or email" value="${esc(q)}" style="width:260px"><button class="b" id="addg">Register guest</button></div></div>
+  m.innerHTML=`<div class="row"><span></span><div class="row" style="margin:0"><input id="q" placeholder="Search name, mobile or email" value="${esc(q)}" style="width:260px"><button class="b s" id="exp1">Export emails (consented)</button><button class="b s" id="exp2">Export all emails</button><button class="b" id="addg">Register guest</button></div></div>
   <div class="panel wrap">${l.length?`<table><tr><th>Name</th><th>Contact</th><th>Birthday</th><th>Anniversary</th><th>Visits</th><th>Spend</th><th>Status</th><th></th></tr>${l.map(g=>`<tr><td><b>${esc(g.name)}</b><br><small style="color:var(--mut)">${esc(g.prefs)}</small></td><td>${esc(g.mobile)}<br><small>${esc(g.email)}</small></td><td>${fmt(g.dob)}</td><td>${fmt(g.anniv)}</td><td>${gv(g.id).length}</td><td>${inr(spend(g))}</td><td><span class="tag tier">${tier(g)}</span>${g.consent?"":'<br><small style="color:var(--red)">No promo consent</small>'}</td><td><button class="b sm" data-rv="${g.id}">Visit</button> <button class="b s sm" data-edit="${g.id}">Edit</button> <button class="b d sm" data-delg="${g.id}">Delete</button></td></tr>`).join("")}</table>`:'<p class="empty">No guests found. Register a guest to start building their profile.</p>'}</div>`;
   $("#q").oninput=e=>{q=e.target.value;const p=e.target.selectionStart;render();$("#q").focus();$("#q").setSelectionRange(p,p)};
   $("#addg").onclick=()=>openG();
+  $("#exp1").onclick=()=>exportEmails(true);
+  $("#exp2").onclick=()=>exportEmails(false);
  }
  if(view==="visits"){
   const l=[...visits].sort((a,b)=>b.date.localeCompare(a.date));
@@ -185,11 +192,29 @@ function render(){
   <div class="panel" style="margin-top:16px"><h2>Offer log: ${log.length} offered, ${red} redeemed${log.length?` (${Math.round(red/log.length*100)}%)`:""}</h2>${log.length?`<div class="wrap"><table><tr><th>Offered on</th><th>Guest</th><th>Occasion</th><th>Offer</th><th>Status</th></tr>${log.slice(0,20).map(o=>`<tr><td>${fmt(o.offeredOn)}</td><td>${esc(o.guestName)}</td><td>${esc(o.kind)}</td><td>${esc(o.text)}</td><td>${o.status==="Redeemed"?`<span class="tag tier">Redeemed ${fmt(o.redeemedOn)}</span>`:`<span class="tag bd">Offered</span> <button class="b sm" data-redeem="${o.id}">Mark redeemed</button>`}</td></tr>`).join("")}</table></div>`:'<p class="empty">No offers logged yet. Use the Celebrations or Win-back tabs to send and track offers.</p>'}</div>`;
  }
 }
+function exportEmails(consentOnly){
+ const l=guests.filter(g=>g.email&&(!consentOnly||g.consent));
+ if(!l.length){alert(consentOnly?"No guests with an email and marketing consent yet.":"No guests with an email yet.");return}
+ const c=s=>'"'+String(s??"").replace(/"/g,'""')+'"';
+ const nm=s=>/^[=+\-@]/.test(s||"")?"'"+s:s;
+ const rows=[["Name","Email","Mobile","Birthday","Anniversary","Marketing consent"],
+  ...l.map(g=>[nm(g.name),g.email,g.mobile,g.dob,g.anniv,g.consent?"Yes":"No"])];
+ const csv="﻿"+rows.map(r=>r.map(c).join(",")).join("\r\n");
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+ a.download="guest-emails-"+iso(new Date())+".csv";
+ a.click();URL.revokeObjectURL(a.href);
+}
 function openG(g={}){$("#gt").textContent=g.id?"Edit guest":"Register guest";$("#gid").value=g.id||"";$("#gn").value=g.name||"";$("#ge").value=g.email||"";$("#gm").value=g.mobile||"";$("#gb").value=g.dob||"";$("#ga").value=g.anniv||"";$("#gp").value=g.prefs||"";$("#gc").checked=!!g.consent;$("#gd").showModal()}
 function openV(id){if(!guests.length){alert("Register a guest first.");return}$("#vg").innerHTML=[...guests].sort((a,b)=>a.name.localeCompare(b.name)).map(g=>`<option value="${g.id}">${esc(g.name)}</option>`).join("");if(id)$("#vg").value=id;$("#vdt").value=new Date().toLocaleDateString("en-CA");$("#vd").showModal()}
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>b.closest("dialog").close());
-$("#gf").onsubmit=async e=>{await store.save("guests",{id:$("#gid").value||undefined,name:$("#gn").value.trim(),email:$("#ge").value.trim(),mobile:$("#gm").value.trim(),dob:$("#gb").value,anniv:$("#ga").value,prefs:$("#gp").value.trim(),consent:$("#gc").checked});await load()};
-$("#vf").onsubmit=async e=>{const g=guests.find(x=>x.id===$("#vg").value);await store.save("visits",{guestId:g.id,guestName:g.name,date:$("#vdt").value,table:$("#vt").value.trim(),party:+$("#vn").value,type:$("#vty").value,occasion:$("#vo").value,bill:+$("#vb").value||0,remarks:$("#vr").value.trim()});$("#vt").value=$("#vr").value=$("#vb").value="";await load()};
+$("#gf").onsubmit=async e=>{e.preventDefault();
+ try{await store.save("guests",{id:$("#gid").value||undefined,name:$("#gn").value.trim(),email:$("#ge").value.trim(),mobile:$("#gm").value.trim(),dob:$("#gb").value,anniv:$("#ga").value,prefs:$("#gp").value.trim(),consent:$("#gc").checked});
+ $("#gd").close();await load()}catch(x){alert("Could not save guest: "+(x.code||x.message))}};
+$("#vf").onsubmit=async e=>{e.preventDefault();
+ try{const g=guests.find(x=>x.id===$("#vg").value);
+ await store.save("visits",{guestId:g.id,guestName:g.name,date:$("#vdt").value,table:$("#vt").value.trim(),party:+$("#vn").value,type:$("#vty").value,occasion:$("#vo").value,bill:+$("#vb").value||0,remarks:$("#vr").value.trim()});
+ $("#vt").value=$("#vr").value=$("#vb").value="";$("#vd").close();await load()}catch(x){alert("Could not save visit: "+(x.code||x.message))}};
 $("#main").onclick=async e=>{const t=e.target.closest("button");if(!t)return;const d=t.dataset;
  if(d.edit)openG(guests.find(g=>g.id===d.edit));
  if(d.rv)openV(d.rv);
