@@ -121,11 +121,24 @@ const OFFER={Birthday:"Complimentary dessert",Anniversary:"Complimentary couple'
 const loyalty=g=>{const t=tier(g);return grp(g)?"Special group dining package":t==="Premium"?"Priority reservation and an exclusive experience":t==="Returning"?"Exclusive loyalty discount":""};
 const events=days=>guests.flatMap(g=>[["Birthday",g.dob],["Anniversary",g.anniv]].map(([k,s])=>{const n=next(s);return n&&n.days<=days?{g,k,...n}:null}).filter(Boolean)).sort((a,b)=>a.days-b.days);
 const first=g=>g.name.split(" ")[0];
-const TPL={
- Birthday:"Hello {name}, everyone at Chouka wishes you a very happy birthday! 🎂 Enjoy a complimentary dessert on your visit. Show this message to our team.",
- Anniversary:"Hello {name}, happy anniversary from all of us at Chouka! 💛 Enjoy a complimentary couple's dessert on your visit.",
- "Win-back":"Hello {name}, we miss you at Chouka! Visit us this month and enjoy an exclusive offer."
+```javascript
+const TPL = {
+  Birthday: {
+    English: "Dear {name}, wishing you a day filled with happiness, laughter, and beautiful memories! 🎂 Everyone at Chouka sends you lots of love and warm wishes. Celebrate with us and enjoy a complimentary dessert on your next visit. ❤️",
+    Assamese: "প্ৰিয় {name}, আপোনাৰ জন্মদিনটো আনন্দ, হাঁহি আৰু সুন্দৰ স্মৃতিৰে ভৰি পৰক! 🎂 Chouka-ৰ সমূহ পৰিয়ালৰ তৰফৰ পৰা আপোনালৈ থাকিল অশেষ মৰম আৰু আন্তৰিক শুভেচ্ছা। আমাৰ সৈতে এই বিশেষ দিনটো উদযাপন কৰিবলৈ আহক আৰু উপভোগ কৰক আমাৰ তৰফৰ পৰা এটি বিশেষ মিঠাই। ❤️"
+  },
+
+  Anniversary: {
+    English: "Dear {name}, here's wishing you both a lifetime of love, laughter, and togetherness! 💛 May your beautiful journey together become even more special with every passing year. Celebrate your special day with us at Chouka and enjoy a complimentary dessert for two. 🥰",
+    Assamese: "প্ৰিয় {name}, আপোনালোক দুয়োলৈ বিবাহ-বাৰ্ষিকীৰ আন্তৰিক শুভেচ্ছা! 💛 আপোনালোকৰ মৰম, বিশ্বাস আৰু একেলগে কটোৱা প্ৰতিটো মুহূৰ্ত সদায় এনেদৰেই সুন্দৰ হৈ থাকক। আপোনালোকৰ এই বিশেষ দিনটো Chouka-ৰ সৈতে উদযাপন কৰক আৰু আমাৰ তৰফৰ পৰা দুয়োৰে বাবে উপভোগ কৰক এটি বিশেষ মিঠাই। 🥰"
+  },
+
+  "Win-back": {
+    English: "Dear {name}, it's been a while, and we've been missing you! ❤️ The Chouka family would love to welcome you back. Come visit us this month and enjoy a little special treat from us. We can't wait to see you again!",
+    Assamese: "প্ৰিয় {name}, বহুদিন হ'ল আপোনাক **চৌকা**-ত লগ পোৱা নাই! ❤️ আপোনাৰ সৈতে আকৌ এবাৰ সুন্দৰ সময় কটাবলৈ **চৌকা**-ৰ সমূহ পৰিয়াল আগ্ৰহেৰে অপেক্ষা কৰি আছে। এই মাহত এবাৰ আহকচোন, আপোনাৰ বাবে আমাৰ ফালৰ পৰা থাকিব এটি বিশেষ উপহাৰ। আকৌ লগ পোৱাৰ আশাত থাকিলোঁ!"
+  }
 };
+```
 const msgFor=(g,k)=>TPL[k].replaceAll("{name}",first(g));
 const wa=(g,msg)=>{let p=(g.mobile||"").replace(/\D/g,"");if(p.length===10)p="91"+p;return p&&g.consent?`https://wa.me/${p}?text=${encodeURIComponent(msg)}`:""};
 const tg=k=>k==="Birthday"?"bd":"an";
